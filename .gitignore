@@ -1,0 +1,15 @@
+lib/MLX42
+bin
+lib/libft/bin
+lib/ft_printf/bin
+lib/get_next_line/bin
+*.o
+*.a
+*.out
+.vscode
+.DS_Store
+.clang-format
+client
+server
+client_bonus
+server_bonus
