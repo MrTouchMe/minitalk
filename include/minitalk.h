@@ -6,7 +6,7 @@
 /*   By: dgiurgev <dgiurgev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 02:11:39 by dgiurgev          #+#    #+#             */
-/*   Updated: 2024/04/19 16:46:30 by dgiurgev         ###   ########.fr       */
+/*   Updated: 2024/04/19 17:04:31 by dgiurgev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,9 @@
 typedef struct s_global
 {
 	char	*message;
+	int		index;
+	int		bit_index;
+	int		size;
 }			t_global;
 
 #endif
