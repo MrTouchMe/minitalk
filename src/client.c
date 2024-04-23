@@ -6,7 +6,7 @@
 /*   By: dgiurgev <dgiurgev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 01:45:10 by dgiurgev          #+#    #+#             */
-/*   Updated: 2024/04/19 18:32:29 by dgiurgev         ###   ########.fr       */
+/*   Updated: 2024/04/23 19:07:35 by dgiurgev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@ void	send_message(pid_t pid, char *message)
 		j = 0;
 		while (j < 8)
 		{
+			bit = ((message[i] << j) & 1);
+			send_bit(pid, bit);
 			j++;
 		}
 		i ++;
