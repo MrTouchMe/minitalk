@@ -6,7 +6,7 @@
 /*   By: dgiurgev <dgiurgev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 01:45:10 by dgiurgev          #+#    #+#             */
-/*   Updated: 2024/04/23 19:07:35 by dgiurgev         ###   ########.fr       */
+/*   Updated: 2024/04/25 16:04:39 by dgiurgev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,61 +14,99 @@
 
 void	send_bit(pid_t pid, char bit)
 {
-	if (bit == 1)
-		kill(pid, SIGUSR1);
+	if (bit % 2)
+		kill(pid, BIT_ONE);
 	else
-		kill(pid, SIGUSR2);
+		kill(pid, BIT_ZERO);
 }
 
-void	send_message(pid_t pid, char *message)
+static bool	server_respond(bool read, bool write)
 {
-	int		i;
-	int		j;
-	char	bit;
+	static bool	respond;
+
+	if (read)
+		return (respond);
+	else
+		respond = write;
+	return (respond);
+}
+// foo 00001010		client
+
+// send_bit(foo >> 7) 0000000 0	0
+// send_bit(foo >> 6) 0000000 0	0
+// send_bit(foo >> 5) 0000000 0	0
+// send_bit(foo >> 4) 0000000 0	0
+// send_bit(foo >> 3) 0000000 1	1
+// send_bit(foo >> 2) 0000001 0	2
+// send_bit(foo >> 1) 0000010 1	5
+// send_bit(foo >> 0) 0000101 0	10
+
+
+// 		   |      |
+// foo >> 3 = 00000001
+
+// i = 7;
+
+// send foo >> i;
+
+// server:
+
+
+
+int	send_message(char* message, size_t len, int pid)
+{
+	int			i;
+	int			j;
+	char		bit;
 
 	i = 0;
-	while (message[i])
+	while (i < len)
 	{
-		j = 0;
-		while (j < 8)
+		j = 7;
+		while (j >= 0)
 		{
-			bit = ((message[i] << j) & 1);
-			send_bit(pid, bit);
+			send_bit(pid, message[i] << j);
+			// while (/*timeout < 100 && !server_respond(true, false)*/)
+			// {
+
+			// }
+			// if timeout
+			// 	return (1)
 			j++;
+			server_respond(false, false);
 		}
 		i ++;
 	}
+	return (0);
 }
 
 void	signal_handler(void)
 {
 	if (SIGUSR1)
-	{
-	}
-	else if (SIGUSR2)
-	{
-	}
+		server_respond(false, true);
 }
 
 int	main(int argc, char **argv)
 {
 	struct sigaction	sa1;
-	struct sigaction	sa2;
-	pid_t				pid;
-	char				*message;
-	char				*message_len;
+	// struct sigaction	sa2;
+	t_client			data;
 
+	ft_memset(&sa1, 0, sizeof(sa1));
+	// ft_memset(&sa2, 0, sizeof(sa2));
 	sa1.sa_sigaction = signal_handler;
 	sa1.sa_flags = SA_SIGINFO;
-	sa2.sa_sigaction = signal_handler;
-	sa2.sa_flags = SA_SIGINFO;
+	// sa2.sa_sigaction = signal_handler;
+	// sa2.sa_flags = SA_SIGINFO;
 	if (argc != 3)
 		ft_printf("argc != 3\n");
-	pid = ft_atoi(argv[1]);
-	ft_printf("%d", pid);
-	message = argv[2];
-	message_len = ft_itoa(ft_strlen(argv[2]));
+	data.server_pid = ft_atoi(argv[1]);
+	ft_printf("%d", data.server_pid);
+	data.message = argv[2];
+	data.size = ft_itoa(ft_strlen(data.message));
 	sigaction(SIGUSR1, &sa1, NULL);
-	sigaction(SIGUSR2, &sa2, NULL);
-	return (0);
+	// sigaction(SIGUSR2, &sa2, NULL);
+	if (!send_message((char*)data.size, (sizeof data.size), data.server_pid))
+		return (send_message(data.message, data.size, data.server_pid));
+	return(1);
 }

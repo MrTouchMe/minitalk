@@ -6,7 +6,7 @@
 /*   By: dgiurgev <dgiurgev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 02:11:39 by dgiurgev          #+#    #+#             */
-/*   Updated: 2024/04/19 17:04:31 by dgiurgev         ###   ########.fr       */
+/*   Updated: 2024/04/25 16:06:39 by dgiurgev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,36 @@
 # include <string.h>
 # include <unistd.h>
 # include <string.h>
+# include <stdbool.h>
 
-typedef struct s_global
+# define BIT_ONE SIGUSR1
+# define BIT_ZERO SIGUSR2
+
+// typedef struct s_global
+// {
+// 	char	*message;
+// 	int		index;
+// 	int		bit_index;
+// 	int		size;
+// }			t_global;
+
+typedef struct s_server
+{
+	size_t			size;
+	size_t			message_index;
+	char*			message;
+	unsigned char	byte;
+	int				byte_index;
+	int				client_pid;
+}	t_server;
+
+typedef struct s_client
 {
 	char	*message;
-	int		index;
+	size_t	index;
 	int		bit_index;
-	int		size;
-}			t_global;
+	size_t	size;
+	int		server_pid;
+}			t_client;
 
 #endif
