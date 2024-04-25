@@ -6,7 +6,7 @@
 /*   By: dgiurgev <dgiurgev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 01:45:10 by dgiurgev          #+#    #+#             */
-/*   Updated: 2024/04/25 16:04:39 by dgiurgev         ###   ########.fr       */
+/*   Updated: 2024/04/25 16:19:37 by dgiurgev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,24 +88,19 @@ void	signal_handler(void)
 
 int	main(int argc, char **argv)
 {
-	struct sigaction	sa1;
-	// struct sigaction	sa2;
+	struct sigaction	sa;
 	t_client			data;
 
-	ft_memset(&sa1, 0, sizeof(sa1));
-	// ft_memset(&sa2, 0, sizeof(sa2));
-	sa1.sa_sigaction = signal_handler;
-	sa1.sa_flags = SA_SIGINFO;
-	// sa2.sa_sigaction = signal_handler;
-	// sa2.sa_flags = SA_SIGINFO;
+	ft_memset(&sa, 0, sizeof(sa));
+	sa.sa_sigaction = signal_handler;
+	sa.sa_flags = SA_SIGINFO;
 	if (argc != 3)
 		ft_printf("argc != 3\n");
 	data.server_pid = ft_atoi(argv[1]);
 	ft_printf("%d", data.server_pid);
 	data.message = argv[2];
 	data.size = ft_itoa(ft_strlen(data.message));
-	sigaction(SIGUSR1, &sa1, NULL);
-	// sigaction(SIGUSR2, &sa2, NULL);
+	sigaction(SIGUSR1, &sa, NULL);
 	if (!send_message((char*)data.size, (sizeof data.size), data.server_pid))
 		return (send_message(data.message, data.size, data.server_pid));
 	return(1);
