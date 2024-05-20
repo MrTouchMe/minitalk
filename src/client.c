@@ -6,7 +6,7 @@
 /*   By: dgiurgev <dgiurgev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 01:45:10 by dgiurgev          #+#    #+#             */
-/*   Updated: 2024/04/25 16:19:37 by dgiurgev         ###   ########.fr       */
+/*   Updated: 2024/05/20 21:17:29 by dgiurgev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ static bool	server_respond(bool read, bool write)
 // send_bit(foo >> 0) 0000101 0	10
 
 
-// 		   |      |
+        //    |      |
 // foo >> 3 = 00000001
 
 // i = 7;
@@ -57,10 +57,10 @@ int	send_message(char* message, size_t len, int pid)
 {
 	int			i;
 	int			j;
-	char		bit;
+	// char		bit;
 
 	i = 0;
-	while (i < len)
+	while ((size_t)i < len)
 	{
 		j = 7;
 		while (j >= 0)
@@ -80,8 +80,12 @@ int	send_message(char* message, size_t len, int pid)
 	return (0);
 }
 
-void	signal_handler(void)
+void	signal_handler(int sig, siginfo_t *info, void *ucontext)
 {
+	(void)sig;
+	(void)info;
+	(void)ucontext;
+
 	if (SIGUSR1)
 		server_respond(false, true);
 }
@@ -95,13 +99,19 @@ int	main(int argc, char **argv)
 	sa.sa_sigaction = signal_handler;
 	sa.sa_flags = SA_SIGINFO;
 	if (argc != 3)
+	{
 		ft_printf("argc != 3\n");
+		return (EXIT_FAILURE);
+	}
 	data.server_pid = ft_atoi(argv[1]);
 	ft_printf("%d", data.server_pid);
-	data.message = argv[2];
-	data.size = ft_itoa(ft_strlen(data.message));
+// die gesamte leange (max 36bit) fuer die string lenge in einen neuen allocierten string packen und send_len(server_pid, len); schreiben um es hinueber zu senden anschliessend benutzt du erst
+// send message um dann die message zu senden
+	// data.message = argv[2];
+	data.size = ft_atoi(ft_itoa(ft_strlen(data.message)));
 	sigaction(SIGUSR1, &sa, NULL);
-	if (!send_message((char*)data.size, (sizeof data.size), data.server_pid))
+	sigaction(SIGUSR2, &sa, NULL);
+	if (!send_message((char *)data.size, (sizeof data.size), data.server_pid))
 		return (send_message(data.message, data.size, data.server_pid));
 	return(1);
 }
