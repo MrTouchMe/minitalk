@@ -6,7 +6,7 @@
 /*   By: dgiurgev <dgiurgev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 01:45:10 by dgiurgev          #+#    #+#             */
-/*   Updated: 2024/05/20 21:17:29 by dgiurgev         ###   ########.fr       */
+/*   Updated: 2024/05/21 21:38:21 by dgiurgev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,14 +66,8 @@ int	send_message(char* message, size_t len, int pid)
 		while (j >= 0)
 		{
 			send_bit(pid, message[i] << j);
-			// while (/*timeout < 100 && !server_respond(true, false)*/)
-			// {
-
-			// }
-			// if timeout
-			// 	return (1)
-			j++;
-			server_respond(false, false);
+			j--;
+			pause();
 		}
 		i ++;
 	}
@@ -107,8 +101,8 @@ int	main(int argc, char **argv)
 	ft_printf("%d", data.server_pid);
 // die gesamte leange (max 36bit) fuer die string lenge in einen neuen allocierten string packen und send_len(server_pid, len); schreiben um es hinueber zu senden anschliessend benutzt du erst
 // send message um dann die message zu senden
-	// data.message = argv[2];
-	data.size = ft_atoi(ft_itoa(ft_strlen(data.message)));
+	data.message = argv[2];
+	data.size = ft_strlen(data.message);
 	sigaction(SIGUSR1, &sa, NULL);
 	sigaction(SIGUSR2, &sa, NULL);
 	if (!send_message((char *)data.size, (sizeof data.size), data.server_pid))

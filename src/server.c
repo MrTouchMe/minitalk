@@ -6,7 +6,7 @@
 /*   By: dgiurgev <dgiurgev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 01:55:33 by dgiurgev          #+#    #+#             */
-/*   Updated: 2024/05/20 21:29:18 by dgiurgev         ###   ########.fr       */
+/*   Updated: 2024/05/21 22:00:27 by dgiurgev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,9 @@ void	server_sig_handler(int sig, siginfo_t *info, void *ucontext)
 	static int message_index = 0;
 
 	(void)ucontext;
-	data = get_client_data();
+	// data = get_client_data();
 	if (!data->client_pid || data->client_pid == info->si_pid)
 	{
-		// data->timeout = 0;
 		if (!data->client_pid)
 		{
 			data->client_pid = info->si_pid;
@@ -45,13 +44,14 @@ void	server_sig_handler(int sig, siginfo_t *info, void *ucontext)
 		else if (sig == BIT_ZERO)
 		{
 			byte = byte << 1;
+			byte_index++;
 		}
 		if (byte_index == 7)
 		{
 			data->message[message_index++] = byte;
 			byte_index = 0;
 		}
-		if ((size_t)message_index == data->size)
+		if ((size_t)message_index == data->size-1)
 		{
 			if (!data->init)
 			{
@@ -64,6 +64,7 @@ void	server_sig_handler(int sig, siginfo_t *info, void *ucontext)
 				free(data->message);
 				data->message = ft_calloc(data->size + 1, 1);
 				message_index = 0;
+				data->init = true;
 			}
 			else
 			{
@@ -75,31 +76,30 @@ void	server_sig_handler(int sig, siginfo_t *info, void *ucontext)
 	}
 }
 
-void	sigint_handler(void)
-{
-	t_server*	data;
+// void	sigint_handler(void)
+// {
+// 	t_server*	data;
 
-	data = get_client_data();
-	if (data->message)
-		free(data->message);
-	exit(SIGINT);
-}
+// 	// data = get_client_data();
+// 	if (data->message)
+// 	free(data->message);
+// 	exit(SIGINT);
+// }
 
-static t_server*	get_client_data(void)
-{
-	static t_server	data;
+// static t_server*	get_client_data(void)
+// {
+// 	static t_server	data;
 
-	return (&data);
-}
+// 	return (&data);
+// }
 
 int	main(void)
 {
 	struct sigaction	sa;
 	t_server*			data;
 
-	data = get_client_data();
+	// data = get_client_data();
 	ft_printf("server PID: %d\n", getpid());
-	// ft_bzero(&sa, sizeof(sa));
 	sa.sa_sigaction = &server_sig_handler;
 	sa.sa_flags = SA_SIGINFO;
 	sigaction(SIGUSR1, &sa, NULL);
@@ -112,10 +112,6 @@ int	main(void)
 	{
 		pause();
 		// usleep(100);
-		// if (data->client_pid)
-		// data->timeout += 100;
-		// if (data->timeout > 2000)
-			// delete data
 	}
 	return (0);
 }
