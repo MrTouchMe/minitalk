@@ -6,7 +6,7 @@
 /*   By: dgiurgev <dgiurgev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 01:45:10 by dgiurgev          #+#    #+#             */
-/*   Updated: 2024/05/21 21:38:21 by dgiurgev         ###   ########.fr       */
+/*   Updated: 2024/05/22 20:16:13 by dgiurgev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,26 @@ static bool	server_respond(bool read, bool write)
 
 // server:
 
+int	send_len(char* message, size_t len, int pid)
+{
+	int			i;
+	int			j;
+	// char		bit;
 
+	i = 0;
+	while ((size_t)i < len)
+	{
+		j = 31;
+		while (j >= 0)
+		{
+			send_bit(pid, message[i] << j);
+			j--;
+			pause();
+		}
+		i ++;
+	}
+	return (0);
+}
 
 int	send_message(char* message, size_t len, int pid)
 {
@@ -106,6 +125,8 @@ int	main(int argc, char **argv)
 	sigaction(SIGUSR1, &sa, NULL);
 	sigaction(SIGUSR2, &sa, NULL);
 	if (!send_message((char *)data.size, (sizeof data.size), data.server_pid))
-		return (send_message(data.message, data.size, data.server_pid));
+		return (send_message(data.message, data.size, data.server_pid),
+				send_len(data.message, data.size, data.server_pid));
+
 	return(1);
 }
