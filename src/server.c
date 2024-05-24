@@ -6,7 +6,7 @@
 /*   By: dgiurgev <dgiurgev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 01:55:33 by dgiurgev          #+#    #+#             */
-/*   Updated: 2024/05/21 22:00:27 by dgiurgev         ###   ########.fr       */
+/*   Updated: 2024/05/24 16:48:36 by dgiurgev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ static t_server* get_client_data();
 
 void	server_sig_handler(int sig, siginfo_t *info, void *ucontext)
 {
-	t_server	*data;
+	t_server	*data = get_client_data();
 	static int byte = 0;
 	static int byte_index = 0;
 	static int message_index = 0;
@@ -68,12 +68,40 @@ void	server_sig_handler(int sig, siginfo_t *info, void *ucontext)
 			}
 			else
 			{
+				int i = 0;
+				while (message_index < data->size)
+				{
+
+				}
 				ft_printf("%s\n", data->message);
 				free(data->message);
 				message_index = 0;
 			}
 		}
 	}
+}
+
+
+int	main(void)
+{
+	struct sigaction	sa;
+	t_server*			data;
+
+	// data = get_client_data();
+	ft_printf("server PID: %d\n", getpid());
+	sa.sa_sigaction = &server_sig_handler;
+	sa.sa_flags = SA_SIGINFO;
+	sigaction(SIGUSR1, &sa, NULL);
+	sigaction(SIGUSR2, &sa, NULL);
+	sigemptyset(&sa.sa_mask);
+	// sigaddset(&sa.sa_mask, SIGUSR1);
+	// sigaddset(&sa.sa_mask, SIGUSR2);
+
+	while (true)
+	{
+		pause();
+	}
+	return (0);
 }
 
 // void	sigint_handler(void)
@@ -92,26 +120,3 @@ void	server_sig_handler(int sig, siginfo_t *info, void *ucontext)
 
 // 	return (&data);
 // }
-
-int	main(void)
-{
-	struct sigaction	sa;
-	t_server*			data;
-
-	// data = get_client_data();
-	ft_printf("server PID: %d\n", getpid());
-	sa.sa_sigaction = &server_sig_handler;
-	sa.sa_flags = SA_SIGINFO;
-	sigaction(SIGUSR1, &sa, NULL);
-	sigaction(SIGUSR2, &sa, NULL);
-	sigemptyset(&sa.sa_mask);
-	sigaddset(&sa.sa_mask, SIGUSR1);
-	sigaddset(&sa.sa_mask, SIGUSR2);
-
-	while (true)
-	{
-		pause();
-		// usleep(100);
-	}
-	return (0);
-}
