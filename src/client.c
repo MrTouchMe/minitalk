@@ -6,7 +6,7 @@
 /*   By: dgiurgev <dgiurgev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 01:45:10 by dgiurgev          #+#    #+#             */
-/*   Updated: 2024/05/24 16:44:40 by dgiurgev         ###   ########.fr       */
+/*   Updated: 2024/05/24 17:43:41 by dgiurgev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	send_message(char* message, int pid)
 		bit = 7;
 		while (bit >= 0)
 		{
-			send_bit(pid, message[pos] << bit);
+			send_bit(pid, (*message/*[pos]*/ << bit) & 1);
 			bit--;
 			// pause();
 		}
@@ -47,7 +47,7 @@ int main(int argc, char **argv)
 	server_pid = ft_atoi(argv[1]);
 	if (argc != 3)
 		return (1);
-	send_message(server_pid, argv[2]);
+	send_message((argv[2]), server_pid);
 	return (0);
 }
 
