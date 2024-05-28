@@ -6,38 +6,35 @@
 /*   By: dgiurgev <dgiurgev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 01:55:34 by dgiurgev          #+#    #+#             */
-/*   Updated: 2024/05/24 18:06:52 by dgiurgev         ###   ########.fr       */
+/*   Updated: 2024/05/28 00:36:50 by dgiurgev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include_bonus/minitalk_bonus.h"
 
-#include "../include/minitalk.h"
-
-void	send_bit(pid_t pid, char bit)
+void send_bit(pid_t pid, char bit)
 {
-	if (bit % 2)
-		kill(pid, BIT_ONE);
+	if (bit)
+		kill(pid, SIGUSR1);
 	else
-		kill(pid, BIT_ZERO);
+		kill(pid, SIGUSR2);
+	usleep(100);
+
 }
 
-int	send_message(char* message, int pid)
+int send_message(char* message, int pid)
 {
-	int	pos;
-	int	bit;
+	int bit;
 
-	while(*message)
+	while (*message)
 	{
-		pos = 0;
 		bit = 7;
 		while (bit >= 0)
 		{
-			send_bit(pid, (*message/*[pos]*/ << bit) & 1);
+			send_bit(pid, (*message >> bit) & 1);
 			bit--;
-			// pause();
 		}
-		pos++;
+		message++;
 	}
 	return (0);
 }
@@ -48,7 +45,7 @@ int main(int argc, char **argv)
 
 	server_pid = ft_atoi(argv[1]);
 	if (argc != 3)
-		return (1);
-	send_message((argv[2]), server_pid);
+		return 1;
+	send_message(argv[2], server_pid);
 	return (0);
 }
