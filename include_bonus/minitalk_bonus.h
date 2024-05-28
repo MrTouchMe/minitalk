@@ -6,7 +6,7 @@
 /*   By: dgiurgev <dgiurgev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 02:11:55 by dgiurgev          #+#    #+#             */
-/*   Updated: 2024/05/26 17:27:00 by dgiurgev         ###   ########.fr       */
+/*   Updated: 2024/05/28 03:00:30 by dgiurgev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ typedef struct s_server
 	size_t			size;
 	bool			init;
 	size_t			message_index;
-	char*			message;
+	char			*message;
 	unsigned char	byte;
 	int				byte_index;
 	int				client_pid;
